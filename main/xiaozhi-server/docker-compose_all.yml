@@ -4,7 +4,10 @@ version: '3'
 services:
   # Server模块
   xiaozhi-esp32-server:
-    image: ghcr.nju.edu.cn/xinnan-tech/xiaozhi-esp32-server:server_latest
+    #image: ghcr.nju.edu.cn/xinnan-tech/xiaozhi-esp32-server:server_latest
+    build:
+      context: ../..
+      dockerfile: Dockerfile-server-base
     container_name: xiaozhi-esp32-server
     depends_on:
       - xiaozhi-esp32-server-db
@@ -20,7 +23,7 @@ services:
     security_opt:
       - seccomp:unconfined
     environment:
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Tokyo
     volumes:
       # 配置文件目录
       - ./data:/opt/xiaozhi-esp32-server/data
@@ -29,7 +32,10 @@ services:
 
   # manager-api和manager-web模块
   xiaozhi-esp32-server-web:
-    image: ghcr.nju.edu.cn/xinnan-tech/xiaozhi-esp32-server:web_latest
+    #image: ghcr.nju.edu.cn/xinnan-tech/xiaozhi-esp32-server:web_latest
+    build:
+      context: ../..
+      dockerfile: Dockerfile-server-base
     container_name: xiaozhi-esp32-server-web
     restart: always
     networks:
