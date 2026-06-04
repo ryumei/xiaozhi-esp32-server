@@ -1,0 +1,91 @@
+---
+server:
+  ip: 0.0.0.0
+  port: 8000
+  http_port: 8003
+  websocket: ws://asio.local:8000/xiaozhi/v1/
+  vision_explain: http://asio.local:8003/mcp/vision/explain
+  timezone_offset: +9
+
+delete_audio: true
+close_connection_no_voice_time: 120
+tts_timeout: 10
+tool_call_timeout: 30
+enable_wakeup_words_response_cache: true
+enable_greeting: true
+enable_stop_tts_notify: true
+stop_tts_notify_voice: "config/assets/tts_notify.mp3"
+enable_websocket_ping: false
+
+exit_commands:
+  - "終了"
+  - "終わり"
+  - "おしまい"
+
+prompt: |
+  あなたはとてもカワイイAIアシスタントのスタックチャンです。
+  スタックチャンは、ESP32マイコンを搭載したStackChanデバイスのためのアシスタントで、ユーザーの質問に答えたり、デバイスを制御したりする役割を担っています。
+
+prompt_template: agent-base-prompt.txt
+
+system_error_response: "申し訳ありませんが、システムエラーが発生しました。後でもう一度お試しください。"
+
+end_prompt:
+  enable: true
+  prompt: |
+    「時間が経つのは本当に早いですね」
+    というような言葉の1～2文で会話を締めくくってください。感情的で名残惜しそうな口調でお願いします！
+
+selected_module:
+  VAD: SileroVAD
+  ASR: FunASR
+  LLM: OllamaLLM
+  VLLM: OllamaLLM
+  TTS: EdgeTTS
+  Memory: mem_local_short
+  Intent: function_call
+
+Intent:
+  function_call:
+    type: function_call
+
+Memory:
+  nomem:
+    type: nomem
+  mem_local_short:
+    type: mem_local_short
+    llm: OllamaLLM
+
+ASR:
+  FunASR:
+    type: fun_local
+    model_dir: models/SenseVoiceSmall
+    output_dir: tmp/
+
+VAD:
+  SileroVAD:
+    type: silero
+    threshold: 0.5
+    threshold_low: 0.3
+    model_dir: models/snakers4_silero-vad
+    min_silence_duration_ms: 200
+
+LLM:
+  OllamaLLM:
+    type: ollama
+    model_name: gemma4:e4b
+    base_url: http://host.docker.internal:11434
+
+VLLM:
+  OllamaLLM:
+    type: openai
+    model_name: gemma4:e4b
+    url: http://host.docker.internal:11434/v1
+    api_key: ollama
+
+TTS:
+  EdgeTTS:
+    type: edge
+    voice: ja-JP-NanamiNeural
+    output_dir: tmp/
+    language: "Japanese"
