@@ -36,7 +36,7 @@ def get_current_weekday() -> str:
     获取今天星期几
     """
     now = datetime.now()
-    return WEEKDAY_MAP[now.strftime("%A")]
+    return now.strftime("%A")
 
 
 def get_current_lunar_date() -> str:
